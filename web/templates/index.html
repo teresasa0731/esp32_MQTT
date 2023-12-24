@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Attendance</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('update_table', function(data) {
+            // 更新表格
+            var table = document.getElementById('attendance_table');
+            Object.keys(data).forEach(function(key) {
+                var row = table.rows.namedItem(key);
+                if (row) {
+                    row.cells[2].innerHTML = data[key].state ? 'Checked In' : 'Not Checked In';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Student Attendance</h1>
+    <table border="1" id="attendance_table">
+        <tr>
+            <th>Student Name</th>
+            <th>Student ID</th>
+            <th>Attendance</th>
+        </tr>
+        {% for student_name, student_info in students.items() %}
+        <tr id="{{ student_name }}">
+            <td>{{ student_name }}</td>
+            <td>{{ student_info.id }}</td>
+            <td>{% if student_info.state %}Checked In{% else %}Not Checked In{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
